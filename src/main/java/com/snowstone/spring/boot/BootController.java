@@ -10,18 +10,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.snowstone.spring.boot.mapper.CountryMapper;
-import com.snowstone.spring.boot.model.Country;
+import com.snowstone.spring.boot.mapper.UserMapper;
+import com.snowstone.spring.boot.model.User;
 
 @Controller
 public class BootController {
 
 	@Autowired
-	CountryMapper countryMapper;
-	@RequestMapping("/vv")
+	UserMapper userMapper;
+	@Autowired
+	RedisUtil redisUtil;
+	
+	@RequestMapping("/find")
 	@ResponseBody
-	public Country vv() {
-		return countryMapper.selectByPrimaryKey(130);
+	public User find() {
+		redisUtil.set("kkpp", "7777");
+		return userMapper.selectByPrimaryKey(2);
 	}
 	
 	
