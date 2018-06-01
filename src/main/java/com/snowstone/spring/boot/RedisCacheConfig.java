@@ -1,15 +1,18 @@
 package com.snowstone.spring.boot;
-import java.lang.reflect.Method;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
-import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -53,133 +56,82 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
    @Value("${spring.a2.redis.password}")
    private String password2;
    
-   @Autowired
-   private JedisPoolConfig jedisPoolConfig;
-   /**
-    * redis哨兵配置
-    * @return
-    */
-//   @Bean
-//   public RedisSentinelConfiguration redisSentinelConfiguration(){
-//       RedisSentinelConfiguration configuration = new RedisSentinelConfiguration();
-//       String[] host = redisNodes.split(",");
-//       for(String redisHost : host){
-//           String[] item = redisHost.split(":");
-//           String ip = item[0];
-//           String port = item[1];
-//           configuration.addSentinel(new RedisNode(ip, Integer.parseInt(port)));
-//       }
-//       configuration.setMaster(master);
-//       return configuration;
-//   }
-   @Bean
-   public JedisPoolConfig jedisPoolConfig() {
-       JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-       jedisPoolConfig.setMaxIdle(8);
-       jedisPoolConfig.setMaxTotal(12);
-       jedisPoolConfig.setMinIdle(10);
-       jedisPoolConfig.setMaxWaitMillis(-1);
-       jedisPoolConfig.setTestOnBorrow(false);
-       return jedisPoolConfig;
-   }
-   /**
-    * 连接redis的工厂类
-    *
-    * @return
-    */
-   @Bean
-   public JedisConnectionFactory jedisConnectionFactory1() {
-       JedisConnectionFactory factory = new JedisConnectionFactory();
-       factory.setPoolConfig(jedisPoolConfig);
-       factory.setHostName(host);
-       factory.setPort(port);
-       factory.setTimeout(timeout);
-       factory.setPassword(password);
-       factory.setDatabase(database);
-       return factory;
-   }
-   @Bean
-   public JedisConnectionFactory jedisConnectionFactory2() {
-       JedisConnectionFactory factory = new JedisConnectionFactory();
-       factory.setPoolConfig(jedisPoolConfig);
-       factory.setHostName(host2);
-       factory.setPort(port2);
-       factory.setTimeout(timeout2);
-       factory.setPassword(password2);
-       factory.setDatabase(database2);
-       return factory;
-   }
-   /**
-    * 配置RedisTemplate
-    * 设置添加序列化器
-    * key 使用string序列化器
-    * value 使用Json序列化器
-    * 还有一种简答的设置方式，改变defaultSerializer对象的实现。
-    *
-    * @return
-    */
-   @Bean
-   public RedisTemplate<Object, Object> redisTemplate1() {
-       //StringRedisTemplate的构造方法中默认设置了stringSerializer
-       RedisTemplate<Object, Object> template = new RedisTemplate<>();
-       //设置开启事务
-       template.setEnableTransactionSupport(true);
-       //set key serializer
-       StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-       template.setKeySerializer(stringRedisSerializer);
-       template.setHashKeySerializer(stringRedisSerializer);
-
-       template.setConnectionFactory(jedisConnectionFactory1());
-       template.afterPropertiesSet();
-       return template;
-   }
-   @Bean
-   public RedisTemplate<Object, Object> redisTemplate2() {
-       //StringRedisTemplate的构造方法中默认设置了stringSerializer
-       RedisTemplate<Object, Object> template = new RedisTemplate<>();
-       //设置开启事务
-       template.setEnableTransactionSupport(true);
-       //set key serializer
-       StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-       template.setKeySerializer(stringRedisSerializer);
-       template.setHashKeySerializer(stringRedisSerializer);
-
-       template.setConnectionFactory(jedisConnectionFactory2());
-       template.afterPropertiesSet();
-       return template;
-   }
-   /**
-    * 设置RedisCacheManager
-    * 使用cache注解管理redis缓存
-    *
-    * @return
-    */
-//   @Override
-//   @Bean
-//   public RedisCacheManager cacheManager() {
-//       RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate());
-//       return redisCacheManager;
-//   }
-
-   /**
-    * 自定义生成redis-key
-    *
-    * @return
-    */
-   @Override
-   public KeyGenerator keyGenerator() {
-       return new KeyGenerator() {
-           @Override
-           public Object generate(Object o, Method method, Object... objects) {
-               StringBuilder sb = new StringBuilder();
-               sb.append(o.getClass().getName()).append(".");
-               sb.append(method.getName()).append(".");
-               for (Object obj : objects) {
-                   sb.append(obj.toString());
-               }
-               System.out.println("keyGenerator=" + sb.toString());
-               return sb.toString();
-           }
-       };
-   }
+   @Bean  
+   public RedisConnectionFactory redisConnectionFactory(){  
+       JedisPoolConfig poolConfig=new JedisPoolConfig();  
+       poolConfig.setMaxIdle(8);  
+       poolConfig.setMinIdle(0);  
+       poolConfig.setTestOnBorrow(true);  
+       poolConfig.setTestOnReturn(true);  
+       poolConfig.setTestWhileIdle(true);  
+       poolConfig.setNumTestsPerEvictionRun(10);  
+       poolConfig.setTimeBetweenEvictionRunsMillis(60000);  
+       JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(poolConfig);  
+       jedisConnectionFactory.setHostName(host);  
+       if(!password.isEmpty()){  
+           jedisConnectionFactory.setPassword(password);  
+       }  
+       jedisConnectionFactory.setPort(port);  
+       jedisConnectionFactory.setDatabase(database);  
+       return jedisConnectionFactory;  
+   }  
+ 
+   @Bean  
+   public RedisConnectionFactory redisConnectionFactory2(){  
+       JedisPoolConfig poolConfig=new JedisPoolConfig();  
+       poolConfig.setMaxIdle(8);  
+       poolConfig.setMinIdle(0);  
+       poolConfig.setTestOnBorrow(true);  
+       poolConfig.setTestOnReturn(true);  
+       poolConfig.setTestWhileIdle(true);  
+       poolConfig.setNumTestsPerEvictionRun(10);  
+       poolConfig.setTimeBetweenEvictionRunsMillis(60000);  
+       JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(poolConfig);  
+       jedisConnectionFactory.setHostName(host2);  
+       if(!password.isEmpty()){  
+           jedisConnectionFactory.setPassword(password);  
+       }  
+       jedisConnectionFactory.setPort(port);  
+       jedisConnectionFactory.setDatabase(database);  
+       return jedisConnectionFactory;  
+   }  
+ 
+   @Bean(name = "redisTemplate1")  
+   public RedisTemplate<String, Object> redisTemplateObject() throws Exception {  
+       RedisTemplate<String, Object> redisTemplateObject = new RedisTemplate<String, Object>();  
+       redisTemplateObject.setConnectionFactory(redisConnectionFactory());  
+       setSerializer(redisTemplateObject);  
+       redisTemplateObject.afterPropertiesSet();  
+       return redisTemplateObject;  
+   }  
+ 
+   @Bean(name = "redisTemplate2")  
+   public RedisTemplate<String, Object> redisTemplateObject2() throws Exception {  
+       RedisTemplate<String, Object> redisTemplateObject = new RedisTemplate<String, Object>();  
+       redisTemplateObject.setConnectionFactory(redisConnectionFactory2());  
+       setSerializer(redisTemplateObject);  
+       redisTemplateObject.afterPropertiesSet();  
+       return redisTemplateObject;  
+   }  
+ 
+ 
+ 
+   private void setSerializer(RedisTemplate<String, Object> template) {  
+       Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(  
+               Object.class);  
+       ObjectMapper om = new ObjectMapper();  
+       om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);  
+       om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);  
+       jackson2JsonRedisSerializer.setObjectMapper(om);  
+       template.setKeySerializer(template.getStringSerializer());  
+       template.setValueSerializer(jackson2JsonRedisSerializer);  
+       template.setHashValueSerializer(jackson2JsonRedisSerializer);  
+       //在使用String的数据结构的时候使用这个来更改序列化方式  
+       /*RedisSerializer<String> stringSerializer = new StringRedisSerializer(); 
+       template.setKeySerializer(stringSerializer ); 
+       template.setValueSerializer(stringSerializer ); 
+       template.setHashKeySerializer(stringSerializer ); 
+       template.setHashValueSerializer(stringSerializer );*/  
+ 
+   }  
 }

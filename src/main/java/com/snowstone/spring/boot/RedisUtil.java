@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -18,12 +20,13 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("unchecked")
 @Component
 public class RedisUtil {
-	@SuppressWarnings("rawtypes")
-	@Autowired
-	private RedisTemplate redisTemplate1;
-
-	@Autowired
-	private RedisTemplate redisTemplate2;
+	@Autowired  
+    @Resource(name = "redisTemplate1")  
+    private RedisTemplate redisTemplate1;  
+  
+    @Autowired  
+    @Resource(name = "redisTemplate2")  
+    private RedisTemplate redisTemplate2;  
 	/**
 	 * 批量删除对应的value
 	 * 
