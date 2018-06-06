@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@MapperScan(basePackages = "com.snowstone.spring.boot.mapper")
+@MapperScan(basePackages = {"com.snowstone.spring.boot.mapper"})
 public class SpringbootApplication {
 
 	public static void main(String[] args) {

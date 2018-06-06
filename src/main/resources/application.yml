@@ -49,10 +49,11 @@ spring:
 #        master: mymaster
 #        nodes: 116.62.117.88:26379,116.62.117.88:26378
     
+    
 mybatis:
     type-aliases-package: com.snowstone.spring.boot.model
     mapper-locations: classpath:mapping/*.xml
-  
+
 mapper:
     mappers: com.snowstone.spring.boot.mapper
     not-empty: false
