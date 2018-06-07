@@ -16,12 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kdqkl.mq.bo.MqBo;
 import com.kdqkl.mq.context.ActiveMQPoolsUtil;
 import com.kdqkl.mq.pojo.MqMessage;
 import com.kdqkl.mq.service.MqClient;
+import com.kdqkl.mq.service.MqComsumer;
+import com.snowstone.spring.boot.RedisUtil;
+import com.snowstone.spring.boot.listener.RequestMessageListener;
 import com.snowstone.spring.boot.mapper.UserMapper;
 import com.snowstone.spring.boot.model.User;
-import com.snowstone.spring.boot.test.MqComsumer;
 
 @Controller
 public class BootController {
@@ -32,7 +35,8 @@ public class BootController {
 	RedisUtil redisUtil;
 	@Autowired
 	DataSource dataSource;
-	
+	@Autowired
+	RequestMessageListener requestMessageListener;
 	@RequestMapping("/find")
 	@ResponseBody
 	public User find() {
@@ -92,10 +96,12 @@ public class BootController {
 	@RequestMapping("/mq2")
 	@ResponseBody
 	public void mq2() {
-		
-		MqComsumer t=new MqComsumer(brokerURL,queueName);
+		MqBo mb=new MqBo();
+		mb.setListener(requestMessageListener);
+		mb.setQueueName(queueName);
+		MqComsumer t=new MqComsumer(brokerURL);
 		t.start();
-		t.onMessage();
+		t.register(mb);
 		System.out.println("---------ok mq2");
 	}
 }
