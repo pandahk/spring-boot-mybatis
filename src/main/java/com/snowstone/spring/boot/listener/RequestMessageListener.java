@@ -44,7 +44,7 @@ public class RequestMessageListener implements MessageListener {
             Queue destination = getRealQueue(message);
             String queueName = destination.getQueueName();
            System.out.println("999999====="+mqMessageStr+"||queueName="+queueName);
-//           message.acknowledge();
+           message.acknowledge();
         } catch (Exception e) {
             logger.error("onMessage error", e);
             throw new RuntimeException("onMessage error",e);

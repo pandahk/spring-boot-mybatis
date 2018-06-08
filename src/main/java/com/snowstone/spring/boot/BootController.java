@@ -37,6 +37,14 @@ public class BootController {
 	DataSource dataSource;
 	@Autowired
 	RequestMessageListener requestMessageListener;
+	
+	@Autowired
+	MqService mqService;
+	
+	
+	
+	
+	
 	@RequestMapping("/find")
 	@ResponseBody
 	public User find() {
@@ -63,8 +71,19 @@ public class BootController {
     // 队列默认大小
     private static Integer queueMaxCount = 500;
     // 是否创建表
-    private static Integer isCreateTable = 1;
+    private static Integer isCreateTable = 0;
     Connection connection;
+    
+    
+    
+    
+    @RequestMapping("/mq")
+	@ResponseBody
+	public void mq() {
+    	mqService.p();
+    }
+    
+    
     //生产者
 	@RequestMapping("/mq1")
 	@ResponseBody
@@ -75,14 +94,10 @@ public class BootController {
 			 
 			 mc.start();
 			 MqMessage mq=new MqMessage();
-			 mq.setId(12);
 			 mq.setMessage("msg msg msg222");
 			 mq.setQueueName("foo.bar");
-			 mq.setMessageStatus(1);
-			 mq.setRetryTimes(2);
 			 mq.setSendTime(new Date().getTime());
 			 mq.setTableName("mqmessage");
-			 mq.setVersion(12);
 			 mc.sendMessage(mq);
 			 
 		} catch (Exception e) {
