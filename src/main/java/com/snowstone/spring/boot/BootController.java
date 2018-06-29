@@ -2,7 +2,9 @@ package com.snowstone.spring.boot;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jms.Connection;
 import javax.sql.DataSource;
@@ -42,7 +44,15 @@ public class BootController {
 	MqService mqService;
 	
 	
-	
+	@RequestMapping("/map")
+	@ResponseBody
+	public Map map() {
+		LinkedHashMap< String, String> link=new LinkedHashMap<>();
+		link.put("12", "500");
+		link.put("33", "100");
+		link.put("11", "300");
+		return link;
+	}
 	
 	
 	@RequestMapping("/find")

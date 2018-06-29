@@ -7,7 +7,7 @@ spring:
     username: root
     password: xianjinxia
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://116.62.117.88:3306/exchange?characterEncoding=UTF-8&&autoReconnect=true&useUnicode=true
+    url: jdbc:mysql://47.97.211.148:3306/demo?characterEncoding=UTF-8&autoReconnect=true&useUnicode=true
     filters: stat
     maxActive: 20
     initialSize: 1
@@ -24,7 +24,7 @@ spring:
   a1:  
     redis:
       database: 0
-      host: 116.62.117.88
+      host: 118.31.4.202
       port: 7000
       password: 
       pool:
@@ -36,8 +36,8 @@ spring:
   a2:  
     redis:
       database: 0
-      host: 116.62.117.88
-      port: 7001
+      host: 118.31.4.202
+      port: 7000
       password: 
       pool:
         max-active: 8
@@ -65,5 +65,13 @@ pagehelper:
     supportMethodsArguments: true
     params: count=countSql
     
+activemq:
+    brokerUrl: tcp://118.31.4.202:61616
+    user: admin
+    password: admin
+    inMemory: true
+    pool:
+      enabled: true
+      max-connections: 100  
 
     
