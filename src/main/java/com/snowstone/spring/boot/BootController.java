@@ -26,7 +26,13 @@ import com.kdqkl.mq.service.MqComsumer;
 import com.snowstone.spring.boot.RedisUtil;
 import com.snowstone.spring.boot.listener.RequestMessageListener;
 import com.snowstone.spring.boot.mapper.UserMapper;
+import com.snowstone.spring.boot.mapper.WorkerMapper;
 import com.snowstone.spring.boot.model.User;
+import com.snowstone.spring.boot.model.Worker;
+import com.snowstone.spring.boot.work.Apply;
+import com.snowstone.spring.boot.work.WorkExecutor;
+
+import cn.jszhan.commons.kern.apiext.redis.RedisClient;
 
 @Controller
 public class BootController {
@@ -43,7 +49,24 @@ public class BootController {
 	@Autowired
 	MqService mqService;
 	
+	@Autowired
+	private WorkExecutor workExecutor;
+	private   String REDIS_KEY = "WORK:ASYN:WORKQUEUE";
 	
+	@Autowired
+	WorkerMapper workerMapper;
+	
+	@RequestMapping("/ss")
+	@ResponseBody
+	public void apply() {
+//		Worker w=workerMapper.selectByPrimaryKey(71);
+//		System.out.println(w.toString());
+//		return w;
+//		RedisClient.set(REDIS_KEY, "mkmkmk");
+//		RedisClient.lpushObjByJson("WORK:ASYN:WORKQUEUE", Apply.class, null);
+		workExecutor.submit("m1", "zs", Apply.class);
+//		RedisClient.lpushObjByJson("WORK:ASYN:xx", Apply.class, null);
+	}
 	@RequestMapping("/map")
 	@ResponseBody
 	public Map map() {

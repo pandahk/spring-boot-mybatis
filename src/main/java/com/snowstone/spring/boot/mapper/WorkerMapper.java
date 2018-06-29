@@ -5,7 +5,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.snowstone.spring.boot.model.Worker;
-import com.snowstone.spring.boot.model.Worker.WorkStatus;
 
 public interface WorkerMapper {
 	int deleteByPrimaryKey(Integer id);
@@ -20,9 +19,7 @@ public interface WorkerMapper {
 
     int updateByPrimaryKey(Worker record);
     
-	List<Worker> findByStatus(WorkStatus status);
 	
-	Worker findOne(Integer id);
 	
 	
 }

@@ -1,12 +1,18 @@
 package com.snowstone.spring.boot.model;
 
+import java.io.Serializable;
 
 /**
  *  
  */
-public class User  {
+public class User  implements Serializable{
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8325875804809975835L;
+
+	/**
      */
     private Integer id;
 

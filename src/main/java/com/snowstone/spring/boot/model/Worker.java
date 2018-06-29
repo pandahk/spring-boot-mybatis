@@ -11,7 +11,7 @@ public class Worker implements Serializable{
 	private Integer id;
     private String workKey;
     private String param;
-    private WorkStatus status;
+    private Integer status;//0-开始 1-完成 2-错误
     private String className;
 
     public String getWorkKey() {
@@ -30,11 +30,11 @@ public class Worker implements Serializable{
         this.param = param;
     }
 
-    public WorkStatus getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(WorkStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -46,15 +46,7 @@ public class Worker implements Serializable{
         this.className = className;
     }
 
-    @Override
-    public String toString() {
-        return "Worker{" +
-                "workKey='" + workKey + '\'' +
-                ", param='" + param + '\'' +
-                ", status=" + status +
-                ", className='" + className + '\'' +
-                '}';
-    }
+   
 
     public Integer getId() {
 		return id;
@@ -64,10 +56,11 @@ public class Worker implements Serializable{
 		this.id = id;
 	}
 
-	public enum WorkStatus {
-        INIT,
-        ERROR,
-        COMPLETE,
-        ;
-    }
+	@Override
+	public String toString() {
+		return "Worker [id=" + id + ", workKey=" + workKey + ", param=" + param + ", status=" + status + ", className="
+				+ className + "]";
+	}
+
+	
 }
