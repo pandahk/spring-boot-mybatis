@@ -17,10 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kdqkl.mq.bo.MqBo;
-import com.kdqkl.mq.pojo.MqMessage;
-import com.kdqkl.mq.service.MqClient;
-import com.kdqkl.mq.service.MqComsumer;
 import com.snowstone.spring.boot.listener.RequestMessageListener;
 import com.snowstone.spring.boot.mapper.UserMapper;
 import com.snowstone.spring.boot.mapper.WorkerMapper;
@@ -43,8 +39,8 @@ public class BootController {
 	@Autowired
 	RequestMessageListener requestMessageListener;
 	
-	@Autowired
-	MqService mqService;
+//	@Autowired
+//	MqService mqService;
 	
 	@Autowired
 	private WorkExecutor workExecutor;
@@ -170,49 +166,49 @@ public class BootController {
     
     
     
-    @RequestMapping("/mq")
-	@ResponseBody
-	public void mq() {
-    	mqService.p();
-    }
+//    @RequestMapping("/mq")
+//	@ResponseBody
+//	public void mq() {
+//    	mqService.p();
+//    }
     
     
     //生产者
-	@RequestMapping("/mq1")
-	@ResponseBody
-	public void mq1() {
-		try {
-			MqClient  mc=new MqClient(brokerURL, dataSource, queueTableName,
-					queueName, queueMaxCount, isCreateTable);
-			 
-			 mc.start();
-			 MqMessage mq=new MqMessage();
-			 mq.setMessage("msg msg msg222");
-			 mq.setQueueName("foo.bar");
-			 mq.setSendTime(new Date().getTime());
-			 mq.setTableName("mqmessage");
-			 mc.sendMessage(mq);
-			 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		System.out.println("---------ok mq1");
-	}
-	//消费者
-	@RequestMapping("/mq2")
-	@ResponseBody
-	public void mq2() {
-		MqBo mb=new MqBo();
-		mb.setListener(requestMessageListener);
-		mb.setQueueName(queueName);
-		MqComsumer t=new MqComsumer(brokerURL);
-		t.start();
-		t.register(mb);
-		System.out.println("---------ok mq2");
-	}
-	
+//	@RequestMapping("/mq1")
+//	@ResponseBody
+//	public void mq1() {
+//		try {
+//			MqClient  mc=new MqClient(brokerURL, dataSource, queueTableName,
+//					queueName, queueMaxCount, isCreateTable);
+//			 
+//			 mc.start();
+//			 MqMessage mq=new MqMessage();
+//			 mq.setMessage("msg msg msg222");
+//			 mq.setQueueName("foo.bar");
+//			 mq.setSendTime(new Date().getTime());
+//			 mq.setTableName("mqmessage");
+//			 mc.sendMessage(mq);
+//			 
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		System.out.println("---------ok mq1");
+//	}
+//	//消费者
+//	@RequestMapping("/mq2")
+//	@ResponseBody
+//	public void mq2() {
+//		MqBo mb=new MqBo();
+//		mb.setListener(requestMessageListener);
+//		mb.setQueueName(queueName);
+//		MqComsumer t=new MqComsumer(brokerURL);
+//		t.start();
+//		t.register(mb);
+//		System.out.println("---------ok mq2");
+//	}
+//	
 	public static String getIpAddr(HttpServletRequest request){
         String ipAddress = request.getHeader("x-forwarded-for");
             if(ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {

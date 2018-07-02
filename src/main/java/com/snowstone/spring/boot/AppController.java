@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.snowstone.spring.boot.mq.Comsumer;
+import com.snowstone.spring.boot.mq.GoodVo;
+import com.snowstone.spring.boot.service.GoodService;
 
 @Controller
 public class AppController {
 
 	@Autowired
 	RedisUtil redisUtil;
-	
-	
+	@Autowired
+	GoodService goodService;
 	@RequestMapping("/redisTest")
 	@ResponseBody
 	public String redisTest(HttpServletRequest request) {
@@ -39,7 +43,28 @@ public class AppController {
 		return JSON.toJSONString(ret);
 	}
 	
+	@RequestMapping("/updateGood")
+	@ResponseBody
+	public boolean updateGood() {
+		
+		return goodService.buy("bike","1");
+	}
 	
-	
-	
+	@RequestMapping("/testbuy")
+	@ResponseBody
+	public String testbuy() {
+		
+		 goodService.benchMark();
+		 return "ok!";
+	}
+	@Autowired
+	Comsumer comsumer;
+	@RequestMapping("/cumser")
+	@ResponseBody
+	public String cumser() throws JMSException {
+		
+		comsumer.getMessage("foo");
+		
+		 return "ok";
+	}
 }

@@ -16,7 +16,6 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 import java.util.Date;
 import java.util.List;
-import com.kdqkl.mq.service.AbstractMqServer;
 /**
  * 任务监听器
  * 负责接收到消息后 发送HTTP请求
