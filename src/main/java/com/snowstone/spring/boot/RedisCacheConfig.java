@@ -9,6 +9,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -117,7 +119,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
  
  
    private void setSerializer(RedisTemplate<String, Object> template) {  
-       Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(  
+	   /*Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(  
                Object.class);  
        ObjectMapper om = new ObjectMapper();  
        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);  
@@ -125,13 +127,13 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
        jackson2JsonRedisSerializer.setObjectMapper(om);  
        template.setKeySerializer(template.getStringSerializer());  
        template.setValueSerializer(jackson2JsonRedisSerializer);  
-       template.setHashValueSerializer(jackson2JsonRedisSerializer);  
+       template.setHashValueSerializer(jackson2JsonRedisSerializer);  */
        //在使用String的数据结构的时候使用这个来更改序列化方式  
-       /*RedisSerializer<String> stringSerializer = new StringRedisSerializer(); 
+       RedisSerializer<String> stringSerializer = new StringRedisSerializer(); 
        template.setKeySerializer(stringSerializer ); 
        template.setValueSerializer(stringSerializer ); 
        template.setHashKeySerializer(stringSerializer ); 
-       template.setHashValueSerializer(stringSerializer );*/  
+       template.setHashValueSerializer(stringSerializer );  
  
    }  
 }
