@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.snowstone.spring.boot.model.User;
 
 
@@ -35,7 +36,11 @@ public class Apply implements MustCompleteWorker , Serializable{
 	@Override
 	public void work(String key, String param) {
 //		workExecutor.submit("m1", "zs", Apply.class);
-		System.out.println("process ......");
+		
+		Order order=JSON.parseObject(param, Order.class);
+		//账户表  扣减
+		//保存
+		System.out.println(order.toString());
 	}
 	
 	

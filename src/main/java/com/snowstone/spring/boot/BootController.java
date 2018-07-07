@@ -17,11 +17,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.snowstone.spring.boot.listener.RequestMessageListener;
 import com.snowstone.spring.boot.mapper.UserMapper;
 import com.snowstone.spring.boot.mapper.WorkerMapper;
 import com.snowstone.spring.boot.model.User;
 import com.snowstone.spring.boot.work.Apply;
+import com.snowstone.spring.boot.work.Order;
 import com.snowstone.spring.boot.work.WorkExecutor;
 
 import cn.jszhan.commons.kern.apiext.redis.RedisClient;
@@ -65,9 +67,10 @@ public class BootController {
 		//redis记录每次请求，自增加1
 		Jedis jedis=RedisClient.getConnection();
 		jedis.incr(key);
+		
 		//设置24小时过期（ps：时间可以作为配置参数，写灵活点)
 		jedis.expire(key, 10);
-		
+		jedis.close();
 		//获取限制次数
 		String value = jedis.get(key);
 		int limitCount = 5;
@@ -117,8 +120,12 @@ public class BootController {
 //		return w;
 //		RedisClient.set(REDIS_KEY, "mkmkmk");
 //		RedisClient.lpushObjByJson("WORK:ASYN:WORKQUEUE", Apply.class, null);
+		Order order=new Order();
+		order.setOrdderNo("order_no_001");
+		order.setAmount("600.0");
+		order.setStatus(1);
 		for (int i = 0; i < 200; i++) {
-			workExecutor.submit("m1", "zs", Apply.class);
+			workExecutor.submit("order_no_00"+i, JSON.toJSONString(order), Apply.class);
 		}
 		
 //		RedisClient.lpushObjByJson("WORK:ASYN:xx", Apply.class, null);

@@ -26,7 +26,7 @@ import cn.jszhan.commons.kern.apiext.redis.RedisClient;
 @Component
 public class WorkExecutor {
 	private final static Logger logger = LoggerFactory.getLogger(WorkExecutor.class);
-	private static final int workCount = 30;
+	private static final int workCount = 3000;
 	private static AtomicInteger remainderCount = new AtomicInteger(workCount);
 	private static final String REDIS_KEY = "WORK:ASYN:WROKQUEUE";
 	ExecutorService executor = Executors.newFixedThreadPool(workCount);
@@ -117,7 +117,6 @@ public class WorkExecutor {
 					while (remainderCount.get() > 0 && lengthOfQueue() > 0) {
 						logger.info("---------------start");
 						Worker worker = RedisClient.rpopObjByJson(REDIS_KEY, Worker.class);
-						System.out.println("11:"+JSON.toJSON(worker));
 						executor.submit(new Consumer(worker));
 						remainderCount.decrementAndGet();
 						logger.info("---------------end");
@@ -146,9 +145,7 @@ public class WorkExecutor {
 		public Object call() throws Exception {
 			try {
 				logger.info("-----------one");
-				System.out.println("22:"+JSON.toJSON(worker));
 				worker = workerMapper.selectByPrimaryKey(worker.getId());
-				System.out.println("33:"+worker);
 				if (worker == null) {
 					return "";
 				}

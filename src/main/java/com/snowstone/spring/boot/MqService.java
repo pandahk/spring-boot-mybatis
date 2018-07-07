@@ -7,6 +7,7 @@
 //
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Isolation;
 //import org.springframework.transaction.annotation.Transactional;
 //
 //import com.kdqkl.mq.pojo.MqMessage;
@@ -34,10 +35,10 @@
 //    // 队列默认大小
 //    private static Integer queueMaxCount = 500;
 //    // 是否创建表
-//    private static Integer isCreateTable = 0;
+//    private static Integer isCreateTable = 1;
 //    Connection connection;
 //	
-//    @Transactional
+//    @Transactional(isolation=Isolation.READ_COMMITTED)
 //	public void p(){
 //		MqClient mc;
 //		try {

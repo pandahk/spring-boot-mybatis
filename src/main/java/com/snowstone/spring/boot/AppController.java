@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.snowstone.spring.boot.mq.Comsumer;
 import com.snowstone.spring.boot.mq.GoodVo;
 import com.snowstone.spring.boot.service.GoodService;
+import com.snowstone.spring.boot.service.UserService;
 
 @Controller
 public class AppController {
@@ -64,6 +65,23 @@ public class AppController {
 	public String cumser() throws JMSException {
 		
 		comsumer.getMessage("foo");
+		
+		 return "ok";
+	}
+	@Autowired
+	UserService userService;
+	
+	@RequestMapping("/x")
+	@ResponseBody
+	public String x()  {
+		userService.readRange();
+		
+		 return "ok";
+	}
+	@RequestMapping("/x1")
+	@ResponseBody
+	public String x1()  {
+		userService.insertData();
 		
 		 return "ok";
 	}
